@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const reduction = require('./controller');
+const auth = require('../auth');
+const authUser = require('../user/auth');
+const authStore = require('../store/auth');
+// const multerMiddleware = require("../../services/multerMiddleware");
+router.get('/', reduction.getReduction);
+router.post('/all', reduction.getReductionList);
+router.post('/add', authStore, reduction.addReduction);
+router.post('/update', authStore, reduction.updateReduction);
+router.post('/delete', authStore, reduction.deleteReduction);
+// router.get('/setting/profile', auth, profile.getProfile);
+// router.post('/setting/profile/change-profile-pic', auth, multerMiddleware.single('image'), profile.changeProfilePic);
+module.exports = router;
