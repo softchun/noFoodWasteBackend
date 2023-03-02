@@ -16,7 +16,7 @@ export interface IOrder extends Document {
     userId: string;
     storeId: string;
     storeName: string;
-    status: string;
+    status: string;     // status -> TO_ACCEPT, TO_PICKUP, CANCELED, COMPLETE
     reduction: ItemData[];
     lastUpdate: Date;
 }
