@@ -8,6 +8,7 @@ router.get('/', auth, store.getUser);
 router.get('/detail', auth, store.getMyStore);
 router.post('/detail', store.getStore);
 router.get('/all', store.getStoreList);
+router.post('/all', store.getStoreList);
 router.post('/register', store.register);
 router.post('/check-account-exist', store.checkAccountExist);
 

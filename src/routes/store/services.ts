@@ -26,6 +26,11 @@ const openTimeInit = {
     sat: openData,
 }
 
+const locationInit = {
+    lat: null,
+    lng: null,
+}
+
 class services {
     static async register(
         email: string,
@@ -41,6 +46,7 @@ class services {
                 password: bcrypt.hashSync(password, 8),
                 isClosed: false,
                 openTime: openTimeInit,
+                location: locationInit,
             });
             registerStore.save();
             // return await Store.findOne({ _id: registerStore._id }).exec()
@@ -117,15 +123,22 @@ class services {
         }
     }
     
-    static async getStoreList() {
+    static async getStoreList(keyword: string) {
         const store = await Store.find().exec();
         if (!store) {
             throw new Error('Store not found');
         }
 
         let storeList = []
+        let query: any = {}
+        if (keyword) {
+            query.$or = [
+                {name: { $regex: keyword, $options: 'i' }},
+                {detail: { $regex: keyword, $options: 'i' }},
+            ]
+        }
 
-        let list = await Store.find().exec();
+        let list = await Store.find(query).exec();
 
         for(let i=0; i<list.length; i++) {
             let store = await this.getStore(list[i]._id)
@@ -158,7 +171,7 @@ class services {
             isClosed: isClosed || store.isClosed,
             detail: detail || store.detail,
             address: address || store.address,
-            location: location || store.location,
+            location: location || locationInit,
             profileImage: profileImage || store.profileImage,
             coverImage: coverImage || store.coverImage,
         }}
