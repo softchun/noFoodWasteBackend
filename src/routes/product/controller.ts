@@ -37,7 +37,7 @@ class controller {
     
     static getProductList = async (req: any, res: Response, next: any) => {
         try {
-            const productList = await ProductServices.getProductList(req.user.payload.id);
+            const productList = await ProductServices.getProductList(req.user.payload.id, req.body.keyword);
             res.status(200).json({
                 status: true,
                 message: 'Get product list successfully',

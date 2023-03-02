@@ -25,8 +25,17 @@ class services {
         }
     }
     
-    static async getProductList(storeId: string) {
-        const list = await Product.find({ storeId }).exec();
+    static async getProductList(storeId: string, keyword: string) {
+        let query: any = {
+            storeId: storeId
+        }
+        if (keyword) {
+            query.$or = [
+                {name: { $regex: keyword, $options: 'i' }},
+                {detail: { $regex: keyword, $options: 'i' }},
+            ]
+        }
+        const list = await Product.find(query).exec();
         let productList = []
         for(let i=0; i<list.length; i++) {
             let product = await this.getProduct(storeId, list[i]._id)
