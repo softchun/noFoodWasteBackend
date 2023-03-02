@@ -8,6 +8,7 @@ const authStore = require('../store/auth')
 
 router.get('/', reduction.getReduction);
 router.post('/all', reduction.getReductionList);
+router.post('/filter', reduction.getReductionListFilter);
 
 router.post('/add', authStore, reduction.addReduction);
 router.post('/update', authStore, reduction.updateReduction);

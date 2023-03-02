@@ -61,6 +61,27 @@ class controller {
             }
         }
     }
+    
+    static getReductionListFilter = async (req: any, res: Response, next: any) => {
+        try {
+            const reductionList = await ReductionServices.getReductionListFilter(req.body.keyword, req.body.storeId);
+            res.status(200).json({
+                status: true,
+                message: 'Get reduction list successfully',
+                reductionList: reductionList
+            })
+        } catch (e) {
+            if (e.message === 'Product not found') {
+                res.status(404).json({
+                    status: false,
+                    errorCode: 'PRODUCT_NOT_FOUND',
+                    message: 'Product not found',
+                })
+            } else {
+                respondServerError(res);
+            }
+        }
+    }
 
     static addReduction = async (req: any, res: Response, next: any) => {
         // Check all required fields
