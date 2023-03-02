@@ -39,6 +39,7 @@ class services {
             detail: product.detail,
             storeId: product.storeId,
             storeName: store.name,
+            image: product.image,
         }
     }
     
