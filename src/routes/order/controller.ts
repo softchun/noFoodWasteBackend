@@ -161,7 +161,7 @@ class controller {
 
     static updateOrderStatus = async (req: any, res: Response, next: any) => {
         // Check all required fields
-        if (!req.body.id || !req.body.newStatus) { // status -> TO_ACCEPT, TO_PICKUP, CANCEL, COMPLETE
+        if (!req.body.id || !req.body.newStatus) { // status -> TO_ACCEPT, TO_PICKUP, CANCELED, COMPLETE
             return res.status(422).json({
                 status: false,
                 errorCode: 'MISSING_FIELD',
@@ -169,12 +169,21 @@ class controller {
             })
         }
         try {
-            const order = await OrderServices.updateOrderStatus(req.user.payload.id, req.body.newStatus);
-            res.status(200).json({
-                status: true,
-                message: 'Update order status successfully',
-                order: order
-            })
+            if (req.user.payload.role === 'customer') {
+                const order = await OrderServices.updateOrderStatus(req.user.payload.id, req.body.id, req.body.newStatus);
+                res.status(200).json({
+                    status: true,
+                    message: 'Update order status successfully',
+                    order: order
+                })
+            } else {
+                const order = await OrderServices.updateOrderStatusStore(req.user.payload.id, req.body.id, req.body.newStatus);
+                res.status(200).json({
+                    status: true,
+                    message: 'Update order status successfully',
+                    order: order
+                })
+            }
         } catch (e) {
             if (e.message === 'Order not found') {
                 res.status(404).json({
@@ -182,23 +191,11 @@ class controller {
                     errorCode: 'ORDER_NOT_FOUND',
                     message: 'Order not found',
                 })
-            } else if (e.message === 'Cart item not found') {
-                res.status(404).json({
-                    status: false,
-                    errorCode: 'CART_ITEM_NOT_FOUND',
-                    message: 'Cart item not found',
-                })
-            } else if (e.message === 'Reduction not found') {
-                res.status(404).json({
-                    status: false,
-                    errorCode: 'REDUCTION_NOT_FOUND',
-                    message: 'Reduction not found',
-                })
-            } else if (e.message === 'Not enough') {
+            } else if (e.message === 'Can not update status') {
                 res.status(401).json({
                     status: false,
-                    errorCode: 'NOT_ENOUGH',
-                    message: 'Not enough',
+                    errorCode: 'CAN_NOT_UPDATE',
+                    message: 'Can not update status',
                 })
             } else {
                 respondServerError(res);

@@ -18,15 +18,8 @@ class services {
             throw new Error("Store not found")
         }
 
-        // let list = order.reduction
-        // let reductionList = []
-        // for(let i=0; i<list.length; i++) {
-        //     let reduction = await ReductionServices.getReduction(list[i].id)
-        //     reductionList.push({
-        //         ...reduction,
-        //         amount: list[i].amount
-        //     })
-        // }
+        let difference = (new Date()).getTime() - (new Date(order.lastUpdate)).getTime()
+        let minutesDifference = Math.floor(difference/1000/60)
 
         return {
             id: id,
@@ -36,6 +29,7 @@ class services {
             status: order.status,
             reduction: order.reduction,
             lastUpdate: order.lastUpdate,
+            minutesDifference: minutesDifference,
         }
     }
     
@@ -133,12 +127,49 @@ class services {
     }
     
     static async updateOrderStatus(
+        userId: string,
         id: string,
-        newStatus: string,
+        newStatus: string, // status -> TO_ACCEPT, TO_PICKUP, CANCELED, COMPLETE
     ) {
-        const order = await Order.findOne({ _id: id }).exec();
+        const order = await Order.findOne({ _id: id, userId: userId }).exec();
         if (!order) {
             throw new Error("Order not found")
+        }
+        
+        if (newStatus !== 'CANCELED' || (order.status !== 'TO_ACCEPT' && order.status !== 'TO_PICKUP')) {
+            throw new Error("Can not update status")
+        }
+        
+        const newValues = {$set: {
+            userId: order.userId,
+            storeId: order.storeId,
+            status: newStatus,
+            reduction: order.reduction,
+            lastUpdate: new Date(),
+        }}
+        const updatedOrder = await Order.updateOne({ _id: id }, newValues);
+
+        return updatedOrder
+    }
+    
+    static async updateOrderStatusStore(
+        storeId: string,
+        id: string,
+        newStatus: string, // status -> TO_ACCEPT, TO_PICKUP, CANCELED, COMPLETE
+    ) {
+        const order = await Order.findOne({ _id: id, storeId: storeId }).exec();
+        if (!order) {
+            throw new Error("Order not found")
+        }
+        
+        let difference = (new Date()).getTime() - (new Date(order.lastUpdate)).getTime()
+        let minutesDifference = Math.floor(difference/1000/60)
+
+        if (!(((newStatus === 'CANCELED' || newStatus === 'TO_PICKUP') && order.status === 'TO_ACCEPT')
+            || (newStatus === 'COMPLETE' && order.status === 'TO_PICKUP')
+            || (newStatus === 'CANCELED' && order.status === 'TO_PICKUP' && minutesDifference >= 30))
+        ) {
+            throw new Error("Can not update status")
         }
         
         const newValues = {$set: {
