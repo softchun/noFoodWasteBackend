@@ -29,7 +29,7 @@ connection.once('open', () => {
     console.log("MongoDB database connection established successfully");
 })
 
-const authRouter = require('./routes/authTmp');
+const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 const storeRouter = require('./routes/store');
 const productRouter = require('./routes/product');
