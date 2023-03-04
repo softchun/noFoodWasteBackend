@@ -16,7 +16,7 @@ class controller {
             })
         }
         try {
-            const cartItem = await CartServices.getCartItem(req.body.id);
+            const cartItem = await CartServices.getCartItem(req.user.payload.id, req.body.id);
             res.status(200).json({
                 status: true,
                 message: 'Get cart item successfully',
@@ -152,7 +152,7 @@ class controller {
 
     static updateCartItem = async (req: any, res: Response, next: any) => {
         // Check all required fields
-        if (!req.body.cartItemId || !req.body.amount) {
+        if (!req.body.cartItemId || (!req.body.amount && req.body.amount !== 0)) {
             return res.status(422).json({
                 status: false,
                 errorCode: 'MISSING_FIELD',

@@ -5,8 +5,8 @@ import { Store } from "../../models/store";
 
 
 class services {
-    static async getCartItem(id: string) {
-        const cartItem = await Cart.findOne({ _id: id }).exec();
+    static async getCartItem(userId: string, id: string) {
+        let cartItem = await Cart.findOne({ _id: id }).exec();
         if (!cartItem) {
             throw new Error("Cart item not found")
         }
@@ -14,6 +14,11 @@ class services {
         const reduction = await Reduction.findOne({ _id: cartItem.reductionId }).exec();
         if (!reduction) {
             throw new Error("Reduction not found")
+        }
+
+        if (cartItem.amount > reduction.stock) {
+            await this.updateCartItem(userId, id, reduction.stock)
+            cartItem = await Cart.findOne({ _id: id }).exec();
         }
 
         const product = await Product.findOne({ _id: reduction.productId }).exec();
@@ -48,7 +53,7 @@ class services {
 
         let cartItemList = []
         for(let i=0; i<list.length; i++) {
-            let cartItem = await this.getCartItem(list[i]._id)
+            let cartItem = await this.getCartItem(userId, list[i]._id)
             cartItemList.push(cartItem)
         }
         
@@ -126,7 +131,7 @@ class services {
         cartItemId: string,
         amount: number,
     ) {
-        const cartItem = await Cart.findOne({ _id: cartItemId }).exec();
+        const cartItem = await Cart.findOne({ _id: cartItemId, userId: userId }).exec();
         if (!cartItem) {
             throw new Error("Cart item not found")
         }
@@ -160,8 +165,8 @@ class services {
         userId: string,
         cartItemId: string,
     ) {
-        const cartItem = await Cart.findOne({ _id: cartItemId }).exec();
-        if (cartItem) {
+        const cartItem = await Cart.findOne({ _id: cartItemId, userId: userId }).exec();
+        if (!cartItem) {
             throw new Error("Cart item not found")
         }
 
