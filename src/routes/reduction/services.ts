@@ -134,6 +134,32 @@ class services {
         return updatedReduction
     }
     
+    static async updateStock(
+        id: string,
+        stock: number,
+    ) {
+        const reduction = await Reduction.findOne({ _id: id }).exec();
+        if (!reduction) {
+            throw new Error("Reduction not found")
+        }
+
+        const product = await Product.findOne({ _id: reduction.productId }).exec();
+        if (!product) {
+            throw new Error("Product not found")
+        }
+
+        const newValues = {$set: {
+            productId: reduction.productId,
+            storeId: product.storeId,
+            stock: stock || reduction.stock,
+            price: reduction.price,
+            expirationDate: reduction.expirationDate,
+        }}
+        const updatedReduction = await Reduction.updateOne({ _id: id }, newValues);
+
+        return updatedReduction
+    }
+    
     static async deleteReduction(
         storeId: string,
         id: string,

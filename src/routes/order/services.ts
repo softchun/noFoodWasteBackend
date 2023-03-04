@@ -3,6 +3,7 @@ import { IOrder, Order } from "../../models/order";
 import { Product } from "../../models/product";
 import { Reduction } from "../../models/reduction";
 import { Store } from "../../models/store";
+import { User } from "../../models/user";
 
 const ReductionServices = require('../reduction/services')
 
@@ -17,6 +18,10 @@ class services {
         if (!store) {
             throw new Error("Store not found")
         }
+        const user = await User.findOne({ _id: order.userId }).exec();
+        if (!user) {
+            throw new Error("User not found")
+        }
 
         let difference = (new Date()).getTime() - (new Date(order.lastUpdate)).getTime()
         let minutesDifference = Math.floor(difference/1000/60)
@@ -24,6 +29,7 @@ class services {
         return {
             id: id,
             userId: order.userId,
+            userName: user.name,
             storeId: order.storeId,
             storeName: store.name,
             status: order.status,
@@ -97,6 +103,8 @@ class services {
                 throw new Error("Products are not same store")
             }
 
+            await ReductionServices.updateStock(list[i].id, reduction.stock - list[i].amount)
+
             reductionList.push({
                 id: list[i].id,
                 productId: reduction.productId,
@@ -149,6 +157,16 @@ class services {
         }}
         const updatedOrder = await Order.updateOne({ _id: id }, newValues);
 
+        if (newStatus === 'CANCELED') {
+            let list = order.reduction
+            for(let i=0; i<list.length; i++) {
+                const reduction = await Reduction.findOne({ _id: list[i].id }).exec();
+                if (reduction) {
+                    await ReductionServices.updateStock(list[i].id, reduction.stock + list[i].amount)
+                }
+            }
+        }
+
         return updatedOrder
     }
     
@@ -181,6 +199,16 @@ class services {
         }}
         const updatedOrder = await Order.updateOne({ _id: id }, newValues);
 
+        if (newStatus === 'CANCELED') {
+            let list = order.reduction
+            for(let i=0; i<list.length; i++) {
+                const reduction = await Reduction.findOne({ _id: list[i].id }).exec();
+                if (reduction) {
+                    await ReductionServices.updateStock(list[i].id, reduction.stock + list[i].amount)
+                }
+            }
+        }
+        
         return updatedOrder
     }
 }
