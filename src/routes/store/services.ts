@@ -135,6 +135,7 @@ class services {
             query.$or = [
                 {name: { $regex: keyword, $options: 'i' }},
                 {detail: { $regex: keyword, $options: 'i' }},
+                {address: { $regex: keyword, $options: 'i' }},
             ]
         }
 
