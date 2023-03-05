@@ -1,9 +1,15 @@
 import { Schema, model, Document } from 'mongoose'
 
+type CancelHistotyData = {
+    date: Date,
+    cancelBy: string,   // customer, store
+}
+
 export interface IUser extends Document {
     email: string;
     password: string;
     name: string;
+    cancelHistoty: CancelHistotyData[];
 }
 
 const collection = 'User'
@@ -20,6 +26,10 @@ const userSchema = new Schema({
     },
     name: {
         type: String,
+        required: true,
+    },
+    cancelHistoty: {
+        type: Array,
         required: true,
     },
 }, {

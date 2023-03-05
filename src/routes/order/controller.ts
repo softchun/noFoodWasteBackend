@@ -142,13 +142,19 @@ class controller {
                     message: 'Store not found',
                 })
             } else if (e.message === 'Products are not same store') {
-                res.status(401).json({
+                res.status(400).json({
                     status: false,
                     errorCode: 'PRODUCT_NOT_SAME_STORE',
                     message: 'Products are not same store',
                 })
+            } else if (e.message === 'You can not order because you have reached the order cancellation limit.') {
+                res.status(400).json({
+                    status: false,
+                    errorCode: 'MAX_LIMIT',
+                    message: e.message,
+                })
             } else if (e.message === 'Not enough') {
-                res.status(401).json({
+                res.status(400).json({
                     status: false,
                     errorCode: 'NOT_ENOUGH',
                     message: 'Not enough',
