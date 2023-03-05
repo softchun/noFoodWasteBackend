@@ -174,7 +174,7 @@ class services {
                 }
             }
             const getOrder = await Order.findOne({ _id: id, userId: userId }).exec();
-            await this.addCancelHistoty(userId, getOrder.lastUpdate, 'customer')
+            await this.addCancelHistory(userId, getOrder.lastUpdate, 'customer')
         }
 
         return updatedOrder
@@ -218,32 +218,32 @@ class services {
                 }
             }
             const getOrder = await Order.findOne({ _id: id, storeId: storeId }).exec();
-            await this.addCancelHistoty(getOrder.userId, getOrder.lastUpdate, 'customer')
+            await this.addCancelHistory(getOrder.userId, getOrder.lastUpdate, 'customer')
         }
         
         return updatedOrder
     }
 
-    static async handleCancelHistoty(
+    static async handleCancelHistory(
         userId: string,
     ) {
         const user = await User.findOne({ _id: userId }).exec();
         if (!user) {
             throw new Error("User not found")
         }
-        if (user.cancelHistoty?.length > 0) {
-            let d = new Date((user.cancelHistoty)[0].date)
+        if (user.cancelHistory?.length > 0) {
+            let d = new Date((user.cancelHistory)[0].date)
             let d2 = new Date()
             
             let difference = d2.getTime() - d.getTime()
             let daysDifference = Math.floor(difference/(1000*60*60*24))     // (1000 milliseconds * 60 seconds * 60 minutes * 24 hours)
 
             if (
-                ((d.getMonth() !== d2.getMonth() || d.getFullYear() !== d2.getFullYear()) && user.cancelHistoty?.length <= MAX_CANCEL)  // new month and cancel order not more than limit
+                ((d.getMonth() !== d2.getMonth() || d.getFullYear() !== d2.getFullYear()) && user.cancelHistory?.length <= MAX_CANCEL)  // new month and cancel order not more than limit
                 || daysDifference >= NUMBER_DAY_LIMIT      // after ban day
             ) {
                 const newValues = {$set: {
-                    cancelHistoty: []
+                    cancelHistory: []
                 }}
                 await User.updateOne({ _id: userId }, newValues);
             }
@@ -253,44 +253,44 @@ class services {
     static async checkCanOrder(
         userId: string,
     ) {
-        await this.handleCancelHistoty(userId)
+        await this.handleCancelHistory(userId)
         const user = await User.findOne({ _id: userId }).exec();
         if (!user) {
             throw new Error("User not found")
         }
-        if (user.cancelHistoty?.length > MAX_CANCEL) {
+        if (user.cancelHistory?.length > MAX_CANCEL) {
             return false
         }
         return true
     }
 
-    static async addCancelHistoty(
+    static async addCancelHistory(
         userId: string,
         date: Date,
         cancelBy: string,
     ) {
-        await this.handleCancelHistoty(userId)
+        await this.handleCancelHistory(userId)
         const user = await User.findOne({ _id: userId }).exec();
         if (!user) {
             throw new Error("User not found")
         }
-        let cancelHistotyList = user.cancelHistoty
-        if (user.cancelHistoty?.length > 0) {
-            cancelHistotyList = [
-                ...cancelHistotyList,
+        let cancelHistoryList = user.cancelHistory
+        if (user.cancelHistory?.length > 0) {
+            cancelHistoryList = [
+                ...cancelHistoryList,
                 {
                     date: date,
                     cancelBy: cancelBy,
                 }
             ]
         } else {
-            cancelHistotyList = [{
+            cancelHistoryList = [{
                 date: date,
                 cancelBy: cancelBy,
             }]
         }
         const newValues = {$set: {
-            cancelHistoty: cancelHistotyList
+            cancelHistory: cancelHistoryList
         }}
         const updatedUser = await User.updateOne({ _id: userId }, newValues);
     }

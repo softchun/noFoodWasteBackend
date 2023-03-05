@@ -18,7 +18,7 @@ class services {
                 name: name,
                 email: email,
                 password: bcrypt.hashSync(password, 8),
-                cancelHistoty: [],
+                cancelHistory: [],
             });
             registerUser.save();
             // return await User.findOne({ _id: registerUser._id }).exec()
