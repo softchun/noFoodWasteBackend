@@ -32,7 +32,8 @@ class services {
             detail: product.detail,
             image: product.image,
             storeId: product.storeId,
-            storeName: store.name
+            storeName: store.name,
+            storeImage: store.profileImage,
         }
     }
     
