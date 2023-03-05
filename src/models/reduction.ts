@@ -6,6 +6,7 @@ export interface IReduction extends Document {
     stock: number;
     price: number;
     expirationDate: Date;
+    bestBeforeDate: Date;
 }
 
 const collection = 'Reduction'
@@ -28,6 +29,9 @@ const reductionSchema = new Schema({
         required: true,
     },
     expirationDate: {
+        type: Date,
+    },
+    bestBeforeDate: {
         type: Date,
     },
 }, {

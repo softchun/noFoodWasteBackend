@@ -26,6 +26,7 @@ class services {
             stock: reduction.stock,
             price: reduction.price,
             expirationDate: reduction.expirationDate,
+            bestBeforeDate: reduction.bestBeforeDate,
             productId: reduction.productId,
             name: product.name,
             productPrice: product.price,
@@ -34,6 +35,7 @@ class services {
             storeId: product.storeId,
             storeName: store.name,
             storeImage: store.profileImage,
+            storeOpenTime: store.openTime,
         }
     }
     
@@ -86,6 +88,7 @@ class services {
         stock: number,
         price: number,
         expirationDate: Date,
+        bestBeforeDate: Date,
     ) {
         const product = await Product.findOne({ _id: productId }).exec();
 
@@ -99,6 +102,7 @@ class services {
             stock: stock,
             price: price,
             expirationDate: expirationDate,
+            bestBeforeDate: bestBeforeDate,
         });
         await reduction.save();
 
@@ -112,6 +116,7 @@ class services {
         stock: number,
         price: number,
         expirationDate: Date,
+        bestBeforeDate: Date,
     ) {
         const reduction = await Reduction.findOne({ _id: id }).exec();
         if (!reduction) {
@@ -129,6 +134,7 @@ class services {
             stock: stock || reduction.stock,
             price: price || reduction.price,
             expirationDate: expirationDate || reduction.expirationDate,
+            bestBeforeDate: bestBeforeDate || reduction.bestBeforeDate,
         }}
         const updatedReduction = await Reduction.updateOne({ _id: id }, newValues);
 
@@ -150,11 +156,7 @@ class services {
         }
 
         const newValues = {$set: {
-            productId: reduction.productId,
-            storeId: product.storeId,
             stock: stock || reduction.stock,
-            price: reduction.price,
-            expirationDate: reduction.expirationDate,
         }}
         const updatedReduction = await Reduction.updateOne({ _id: id }, newValues);
 

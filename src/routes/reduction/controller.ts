@@ -98,7 +98,8 @@ class controller {
                 req.body.productId,
                 req.body.stock,
                 req.body.price,
-                req.body.expirationDate
+                req.body.expirationDate,
+                req.body.bestBeforeDate,
             );
             res.status(200).json({
                 status: true,
@@ -134,7 +135,8 @@ class controller {
                 req.body.productId,
                 req.body.stock,
                 req.body.price,
-                req.body.expirationDate
+                req.body.expirationDate,
+                req.body.bestBeforeDate,
             );
             res.status(200).json({
                 status: true,
