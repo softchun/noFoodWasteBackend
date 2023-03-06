@@ -8,7 +8,7 @@ const respondServerError = require('../../helpers/respondServerError');
 class controller {
     static getOrder = async (req: any, res: Response, next: any) => {
         // Check all required fields
-        if (!req.body.id) {
+        if (!req.params.id) {
             return res.status(422).json({
                 status: false,
                 errorCode: 'MISSING_FIELD',
@@ -16,7 +16,7 @@ class controller {
             })
         }
         try {
-            const order = await OrderServices.getOrder(req.body.id);
+            const order = await OrderServices.getOrder(req.params.id);
             res.status(200).json({
                 status: true,
                 message: 'Get order successfully',
@@ -62,14 +62,14 @@ class controller {
     static getOrderList = async (req: any, res: Response, next: any) => {
         try {
             if (req.user.payload.role === 'customer') {
-                const orderList = await OrderServices.getOrderList(req.user.payload.id, null, req.body.status);
+                const orderList = await OrderServices.getOrderList(req.user.payload.id, null, req.query.status);
                 res.status(200).json({
                     status: true,
                     message: 'Get order list successfully',
                     orderList: orderList
                 })
             } else {
-                const orderList = await OrderServices.getOrderList(null, req.user.payload.id, req.body.status);
+                const orderList = await OrderServices.getOrderList(null, req.user.payload.id, req.query.status);
                 res.status(200).json({
                     status: true,
                     message: 'Get order list successfully',

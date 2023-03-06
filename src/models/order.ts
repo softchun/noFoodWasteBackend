@@ -11,7 +11,7 @@ type ItemData = {
     image: string,
     detail: string,
     expirationDate: Date,
-    bestBeforeDate: Date;
+    bestBeforeDate: Date,
 }
 export interface IOrder extends Document {
     userId: string;

@@ -4,19 +4,19 @@ const router = express.Router()
 const store = require('./controller')
 const auth = require('./auth')
 
+// for store
 router.get('/', auth, store.getUser);
-router.get('/detail', auth, store.getMyStore);
-router.post('/detail', store.getStore);
-router.get('/all', store.getStoreList);
-router.post('/all', store.getStoreList);
 router.post('/register', store.register);
 router.post('/check-account-exist', store.checkAccountExist);
-
-router.post('/update', auth, store.updateStore);
-
 router.post('/login', store.login);
 router.post('/logout', store.logout);
 
-router.post('/check-verified', auth, store.checkVerified);
+router.get('/mystore', auth, store.getMyStore);     // get detail of my store
+router.post('/update', auth, store.updateStore);
+
+// for customer
+router.get('/detail/:id', store.getStore);
+router.get('/all', store.getStoreList);             // ?keyword=xxx
+
 
 module.exports = router

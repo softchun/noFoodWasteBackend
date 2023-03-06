@@ -39,14 +39,32 @@ class services {
         }
     }
     
-    static async getReductionList(storeId?: string) {
+    static async getReductionList(storeId?: string, keyword?: string) {
         let list = null
         let reductionList = []
+
+        let query: any = {}
         if (storeId) {
-            list = await Reduction.find({ storeId: storeId }).exec();
-        } else {
-            list = await Reduction.find().exec();
+            query.storeId = storeId
         }
+
+        if (!!keyword) {
+            query.$or = [
+                {name: { $regex: keyword, $options: 'i' }},
+                {detail: { $regex: keyword, $options: 'i' }},
+            ]
+            let productList = await Product.find(query).exec();
+            let productIdList = productList.map((item) => item._id)
+            list = await Reduction.find({ productId: {$in: productIdList} }).exec();
+        } else {
+            list = await Reduction.find(query).exec();
+        }
+
+        // if (storeId) {
+        //     list = await Reduction.find({ storeId: storeId }).exec();
+        // } else {
+        //     list = await Reduction.find().exec();
+        // }
 
         for(let i=0; i<list.length; i++) {
             let reduction = await this.getReduction(list[i]._id)

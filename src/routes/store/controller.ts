@@ -122,21 +122,6 @@ class controller {
             respondServerError(res);
         }
     }
-    
-    static checkVerified = async (req: any, res: Response, next: any) => {
-        try {
-            res.status(200).json({
-                status: true,
-                message: 'Verify successfully',
-                user: {
-                    id: req.user.payload.id,
-                    email: req.user.payload.email,
-                }
-            })
-        } catch (e) {
-            respondServerError(res);
-        }
-    }
 
     static getUser = async (req: any, res: Response, next: any) => {
         try {
@@ -184,7 +169,7 @@ class controller {
     
     static getStore = async (req: Request, res: Response, next: any) => {
         // Check all required fields
-        if (!req.body.id) {
+        if (!req.params.id) {
             return res.status(422).json({
                 status: false,
                 errorCode: 'MISSING_FIELD',
@@ -192,7 +177,7 @@ class controller {
             })
         }
         try {
-            const store = await AuthServices.getStore(req.body.id);
+            const store = await AuthServices.getStore(req.params.id);
             res.status(200).json({
                 status: true,
                 message: 'Get store successfully',
@@ -214,7 +199,7 @@ class controller {
     
     static getStoreList = async (req: Request, res: Response, next: any) => {
         try {
-            const storeList = await AuthServices.getStoreList(req.body.keyword);
+            const storeList = await AuthServices.getStoreList(req.query.keyword);
             res.status(200).json({
                 status: true,
                 message: 'Get store list successfully',

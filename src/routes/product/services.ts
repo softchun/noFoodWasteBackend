@@ -29,7 +29,7 @@ class services {
         let query: any = {
             storeId: storeId
         }
-        if (keyword) {
+        if (!!keyword) {
             query.$or = [
                 {name: { $regex: keyword, $options: 'i' }},
                 {detail: { $regex: keyword, $options: 'i' }},

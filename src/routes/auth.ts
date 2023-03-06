@@ -11,10 +11,10 @@ const auth = async (req: any, res: Response, next: any) => {
             message: 'Authentication code not found'
         })
     }
-    await myjwt.verifyAccessToken(token).then(user => {
+    await myjwt.verifyAccessToken(token).then((user: any) => {
         req.user = user
         next()
-    }).catch(err => {
+    }).catch((err: any) => {
         return res.status(401).json({
             status: false,
             message: 'Authentication code is invalid'

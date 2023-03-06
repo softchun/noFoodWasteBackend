@@ -5,11 +5,11 @@ const order = require('./controller')
 const auth = require('../user/auth')
 const authStore = require('../store/auth')
 
-router.post('/detail', auth, order.getOrder);
-router.post('/store/detail', authStore, order.getOrder);
+router.get('/detail/:id', auth, order.getOrder);
+router.get('/store/detail/:id', authStore, order.getOrder);
 
-router.post('/', auth, order.getOrderList);
-router.post('/store', authStore, order.getOrderList);
+router.get('/all', auth, order.getOrderList);
+router.get('/store/all', authStore, order.getOrderList);
 
 router.post('/add', auth, order.addOrder);
 router.post('/update-status', auth, order.updateOrderStatus);

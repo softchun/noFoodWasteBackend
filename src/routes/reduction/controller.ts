@@ -8,7 +8,7 @@ const respondServerError = require('../../helpers/respondServerError');
 class controller {
     static getReduction = async (req: any, res: Response, next: any) => {
         // Check all required fields
-        if (!req.body.id) {
+        if (!req.params.id) {
             return res.status(422).json({
                 status: false,
                 errorCode: 'MISSING_FIELD',
@@ -16,7 +16,7 @@ class controller {
             })
         }
         try {
-            const reduction = await ReductionServices.getReduction(req.body.id);
+            const reduction = await ReductionServices.getReduction(req.params.id);
             res.status(200).json({
                 status: true,
                 message: 'Get reduction successfully',
@@ -43,7 +43,7 @@ class controller {
     
     static getReductionList = async (req: any, res: Response, next: any) => {
         try {
-            const reductionList = await ReductionServices.getReductionList(req.body.storeId);
+            const reductionList = await ReductionServices.getReductionList(req.query.storeId, req.query.keyword);
             res.status(200).json({
                 status: true,
                 message: 'Get reduction list successfully',

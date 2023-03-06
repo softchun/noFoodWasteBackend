@@ -8,7 +8,7 @@ const respondServerError = require('../../helpers/respondServerError');
 class controller {
     static getProduct = async (req: any, res: Response, next: any) => {
         // Check all required fields
-        if (!req.body.id) {
+        if (!req.params.id) {
             return res.status(422).json({
                 status: false,
                 errorCode: 'MISSING_FIELD',
@@ -16,7 +16,7 @@ class controller {
             })
         }
         try {
-            const product = await ProductServices.getProduct(req.user.payload.id, req.body.id);
+            const product = await ProductServices.getProduct(req.user.payload.id, req.params.id);
             res.status(200).json({
                 status: true,
                 message: 'Get product successfully',
@@ -37,7 +37,7 @@ class controller {
     
     static getProductList = async (req: any, res: Response, next: any) => {
         try {
-            const productList = await ProductServices.getProductList(req.user.payload.id, req.body.keyword);
+            const productList = await ProductServices.getProductList(req.user.payload.id, req.query?.keyword);
             res.status(200).json({
                 status: true,
                 message: 'Get product list successfully',

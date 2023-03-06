@@ -8,7 +8,7 @@ const respondServerError = require('../../helpers/respondServerError');
 class controller {
     static getCartItem = async (req: any, res: Response, next: any) => {
         // Check all required fields
-        if (!req.body.id) {
+        if (!req.params.id) {
             return res.status(422).json({
                 status: false,
                 errorCode: 'MISSING_FIELD',
@@ -16,7 +16,7 @@ class controller {
             })
         }
         try {
-            const cartItem = await CartServices.getCartItem(req.user.payload.id, req.body.id);
+            const cartItem = await CartServices.getCartItem(req.user.payload.id, req.params.id);
             res.status(200).json({
                 status: true,
                 message: 'Get cart item successfully',
