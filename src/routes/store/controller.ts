@@ -197,9 +197,14 @@ class controller {
         }
     }
     
-    static getStoreList = async (req: Request, res: Response, next: any) => {
+    static getStoreList = async (req: any, res: Response, next: any) => {
         try {
-            const storeList = await AuthServices.getStoreList(req.query.keyword);
+            const storeList = await AuthServices.getStoreList(
+                req.query.keyword,
+                parseInt(req.query.skip),
+                parseInt(req.query.limit),
+                parseInt(req.query.sort),
+            );
             res.status(200).json({
                 status: true,
                 message: 'Get store list successfully',

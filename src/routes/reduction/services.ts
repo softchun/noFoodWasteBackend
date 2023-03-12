@@ -39,13 +39,26 @@ class services {
         }
     }
     
-    static async getReductionList(storeId?: string, keyword?: string) {
+    static async getReductionList(
+        storeId?: string,
+        keyword?: string,
+        skip?: number,
+        limit?: number,
+        sort?: number,
+    ) {
         let list = null
         let reductionList = []
 
         let query: any = {}
         if (storeId) {
             query.storeId = storeId
+        }
+        let options: any = {
+            sort: { _id: sort || -1 },
+            skip: skip || 0,
+        }
+        if (limit) {
+            options.limit = limit
         }
 
         if (!!keyword) {
@@ -55,9 +68,9 @@ class services {
             ]
             let productList = await Product.find(query).exec();
             let productIdList = productList.map((item) => item._id)
-            list = await Reduction.find({ productId: {$in: productIdList} }).exec();
+            list = await Reduction.find({ productId: {$in: productIdList} }, undefined, options).exec();
         } else {
-            list = await Reduction.find(query).exec();
+            list = await Reduction.find(query, undefined, options).exec();
         }
 
         // if (storeId) {

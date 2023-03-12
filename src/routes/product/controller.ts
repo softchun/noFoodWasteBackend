@@ -37,7 +37,13 @@ class controller {
     
     static getProductList = async (req: any, res: Response, next: any) => {
         try {
-            const productList = await ProductServices.getProductList(req.user.payload.id, req.query?.keyword);
+            const productList = await ProductServices.getProductList(
+                req.user.payload.id,
+                req.query?.keyword,
+                parseInt(req.query.skip),
+                parseInt(req.query.limit),
+                parseInt(req.query.sort),
+            );
             res.status(200).json({
                 status: true,
                 message: 'Get product list successfully',

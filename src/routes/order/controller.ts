@@ -62,14 +62,28 @@ class controller {
     static getOrderList = async (req: any, res: Response, next: any) => {
         try {
             if (req.user.payload.role === 'customer') {
-                const orderList = await OrderServices.getOrderList(req.user.payload.id, null, req.query.status);
+                const orderList = await OrderServices.getOrderList(
+                    req.user.payload.id,
+                    null,
+                    req.query.status,
+                    parseInt(req.query.skip),
+                    parseInt(req.query.limit),
+                    parseInt(req.query.sort),
+                );
                 res.status(200).json({
                     status: true,
                     message: 'Get order list successfully',
                     orderList: orderList
                 })
             } else {
-                const orderList = await OrderServices.getOrderList(null, req.user.payload.id, req.query.status);
+                const orderList = await OrderServices.getOrderList(
+                    null,
+                    req.user.payload.id,
+                    req.query.status,
+                    parseInt(req.query.skip),
+                    parseInt(req.query.limit),
+                    parseInt(req.query.sort),
+                );
                 res.status(200).json({
                     status: true,
                     message: 'Get order list successfully',

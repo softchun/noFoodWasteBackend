@@ -43,7 +43,13 @@ class controller {
     
     static getReductionList = async (req: any, res: Response, next: any) => {
         try {
-            const reductionList = await ReductionServices.getReductionList(req.query.storeId, req.query.keyword);
+            const reductionList = await ReductionServices.getReductionList(
+                req.query.storeId,
+                req.query.keyword,
+                parseInt(req.query.skip),
+                parseInt(req.query.limit),
+                parseInt(req.query.sort),
+            );
             res.status(200).json({
                 status: true,
                 message: 'Get reduction list successfully',

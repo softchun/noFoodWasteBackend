@@ -25,7 +25,13 @@ class services {
         }
     }
     
-    static async getProductList(storeId: string, keyword: string) {
+    static async getProductList(
+        storeId: string,
+        keyword: string,
+        skip?: number,
+        limit?: number,
+        sort?: number,
+    ) {
         let query: any = {
             storeId: storeId
         }
@@ -35,7 +41,16 @@ class services {
                 {detail: { $regex: keyword, $options: 'i' }},
             ]
         }
-        const list = await Product.find(query).exec();
+
+        let options: any = {
+            sort: { _id: sort || -1 },
+            skip: skip || 0,
+        }
+        if (limit) {
+            options.limit = limit
+        }
+
+        const list = await Product.find(query, undefined, options).exec();
         let productList = []
         for(let i=0; i<list.length; i++) {
             let product = await this.getProduct(storeId, list[i]._id)

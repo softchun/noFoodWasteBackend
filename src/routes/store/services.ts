@@ -123,7 +123,12 @@ class services {
         }
     }
     
-    static async getStoreList(keyword: string) {
+    static async getStoreList(
+        keyword: string,
+        skip?: number,
+        limit?: number,
+        sort?: number,
+    ) {
         const store = await Store.find().exec();
         if (!store) {
             throw new Error('Store not found');
@@ -138,8 +143,16 @@ class services {
                 {address: { $regex: keyword, $options: 'i' }},
             ]
         }
+        
+        let options: any = {
+            sort: { _id: sort || -1 },
+            skip: skip || 0,
+        }
+        if (limit) {
+            options.limit = limit
+        }
 
-        let list = await Store.find(query).exec();
+        let list = await Store.find(query, undefined, options).exec();
 
         for(let i=0; i<list.length; i++) {
             let store = await this.getStore(list[i]._id)

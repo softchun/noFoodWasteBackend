@@ -46,6 +46,9 @@ class services {
         userId: string,
         storeId: string,
         status: string,
+        skip?: number,
+        limit?: number,
+        sort?: number,
     ) {
         let query: any = {}
         if (storeId) {
@@ -57,7 +60,16 @@ class services {
         if (status) {
             query.status = status
         }
-        let list = await Order.find(query).exec();
+        
+        let options: any = {
+            sort: { _id: sort || -1 },
+            skip: skip || 0,
+        }
+        if (limit) {
+            options.limit = limit
+        }
+
+        let list = await Order.find(query, undefined, options).exec();
 
         let orderList = []
         for(let i=0; i<list.length; i++) {
