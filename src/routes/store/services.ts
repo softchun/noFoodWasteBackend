@@ -145,7 +145,8 @@ class services {
         }
         
         let options: any = {
-            sort: { _id: sort || -1 },
+            // sort: { _id: sort || -1 },
+            sort: { updatedAt: sort || -1 },
             skip: skip || 0,
         }
         if (limit) {
