@@ -3,8 +3,6 @@ import { Response } from "express";
 const ProductServices = require('./services')
 const respondServerError = require('../../helpers/respondServerError');
 
-// TODO: All error that's using http-errors library must return as JSON instead
-// TODO: All console.log must be removed and replace with logger or something better
 class controller {
     static getProduct = async (req: any, res: Response, next: any) => {
         // Check all required fields

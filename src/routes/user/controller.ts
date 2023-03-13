@@ -3,8 +3,6 @@ import { Request, Response } from "express";
 const AuthServices = require('./services')
 const respondServerError = require('../../helpers/respondServerError');
 
-// TODO: All error that's using http-errors library must return as JSON instead
-// TODO: All console.log must be removed and replace with logger or something better
 class controller {
     static register = async (req: Request, res: Response, next: any) => {
         // Check all required fields
@@ -23,25 +21,24 @@ class controller {
             })
         } catch (e) {
             if (e.message === 'This email has already registered') {
-                res.status(200).json({
+                res.status(400).json({
                     status: false,
                     errorCode: 'EMAIL_EXIST',
                     message: 'This email has already registered',
                 })
             } else if (e.message === 'Invalid email') {
-                res.status(200).json({
+                res.status(400).json({
                     status: false,
                     errorCode: 'INVALID_EMAIL',
                     message: "Invalid email"
                 })
             } else if (e.message === 'Password not meet requirement') {
-                res.status(200).json({
+                res.status(400).json({
                     status: false,
                     errorCode: 'PASSWORD_NOT_MEET_REQUIREMENT',
                     message: 'Password need 8 or more characters with a mix of letters and numbers',
                 })
             } else {
-                console.log(e)
                 respondServerError(res);
             }
         }
@@ -70,7 +67,7 @@ class controller {
                 })
         } catch (e) {
             if (e.message === "User not found") {
-                res.status(200).json({
+                res.status(404).json({
                     status: false,
                     errorCode: 'USER_NOT_FOUND',
                     message: 'User not found',
@@ -82,7 +79,6 @@ class controller {
                     message: 'Wrong password',
                 })
             } else {
-                console.log(e);
                 respondServerError(res);
             }
         }
@@ -96,7 +92,6 @@ class controller {
                     message: 'User logged out successfully',
                 });
         } catch (e) {
-            console.log(e);
             respondServerError(res);
         }
     }
@@ -118,14 +113,13 @@ class controller {
                     message: 'Account is not exist',
                 })
             } else {
-                res.status(409).json({
+                res.status(200).json({
                     status: false,
                     errorCode: 'EMAIL_EXIST',
                     message: 'Account has already exist',
                 })
             }
         } catch (e) {
-            console.log(e);
             respondServerError(res);
         }
     }
@@ -142,7 +136,6 @@ class controller {
                 }
             })
         } catch (e) {
-            console.log(e);
             respondServerError(res);
         }
     }
@@ -157,13 +150,12 @@ class controller {
             })
         } catch (e) {
             if (e.message === "User not found") {
-                res.status(200).json({
+                res.status(404).json({
                     status: false,
                     errorCode: 'USER_NOT_FOUND',
                     message: 'User not found',
                 })
             } else {
-                console.log(e);
                 respondServerError(res);
             }
         }

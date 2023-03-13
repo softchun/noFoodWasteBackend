@@ -3,8 +3,6 @@ import { Response } from "express";
 const OrderServices = require('./services')
 const respondServerError = require('../../helpers/respondServerError');
 
-// TODO: All error that's using http-errors library must return as JSON instead
-// TODO: All console.log must be removed and replace with logger or something better
 class controller {
     static getOrder = async (req: any, res: Response, next: any) => {
         // Check all required fields
@@ -212,7 +210,7 @@ class controller {
                     message: 'Order not found',
                 })
             } else if (e.message === 'Can not update status') {
-                res.status(401).json({
+                res.status(400).json({
                     status: false,
                     errorCode: 'CAN_NOT_UPDATE',
                     message: 'Can not update status',
